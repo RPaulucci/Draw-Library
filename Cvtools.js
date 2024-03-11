@@ -1,7 +1,9 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable import/extensions */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
-import Draw from './RppDraw';
-import { run } from './run';
+import Draw from './RppDraw.js';
+import { run } from './run.js';
 
 export default class CvTools {
   #view;
@@ -274,13 +276,14 @@ export default class CvTools {
     console.log(this.#getXY().y - this.#toCenter_y);
     console.log(this.angle);
     console.log(this.#path);
+    console.log(this.#pathh);
   }
 
   #centralizer() {
     let [x, y, w, h] = [0, 0, 0, 0];
     const m = this.margin;
     let a = 2;
-    while (a -= 1) {
+    while (a--) {
       this.#pathh.forEach((item, i) => {
         const vect = [];
         item.vetor.forEach((value) => {
