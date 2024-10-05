@@ -92,17 +92,9 @@ export default class CvTools {
     for (let i = 0; i < imageData.height; i += 1) {
       grade.push([]);
       for (let j = 0; j < imageData.width; j += 1) {
-        grade[i].push({
-          R: 0,
-          G: 0,
-          B: 0,
-          A: 0,
-        });
+        grade[i].push(new Uint8ClampedArray(4).fill(0));
       }
     }
-
-    CvTools.switchData(grade, imageData, 'to');
-
     return grade;
   }
 
@@ -110,8 +102,8 @@ export default class CvTools {
     let n = 0;
     grade.forEach((vl) => vl.forEach((v) => {
       for (const p in v) {
-        if (sent === 'from') imageData.data[n += 1] = v[p];
-        if (sent === 'to') v[p] = imageData.data[n += 1];
+        if (sent === 'from') imageData.data[n++] = v[p];
+        if (sent === 'to') v[p] = imageData.data[n++];
       }
     }));
   }
@@ -169,9 +161,7 @@ export default class CvTools {
   }
 
   matrix(i) {
-    this.st.transform = `matrix3d(${i[0]}, ${i[1]}, ${i[2]}, ${i[3]}, ${i[4]}, ${i[5]},
-          ${i[6]}, ${i[7]}, ${i[8]}, ${i[9]}, ${i[10]}, ${i[11]}, ${i[12]}, ${i[13]}, ${i[14]},
-          ${i[15]}, ${i[16]})`;
+    this.st.transform = `matrix3d(${i.join(',')})`;
   }
 
   /** sp = {range: a, speed: b} */
@@ -183,8 +173,8 @@ export default class CvTools {
     ef = { x: 90, y: 0 },
   }) {
     this.st.display = 'block';
-    const w = this.width;
-    const h = this.height;
+    const w = this.view.clientWidth;
+    const h = this.view.clientHeight;
     const { x } = this;
     const { y } = this;
     let i = sp.start;
@@ -223,17 +213,35 @@ export default class CvTools {
     this.hide();
   }
 
-  #clear(imageData) {
-    const dataToClear = CvTools.gradeData(imageData);
-    const data = CvTools.gradeData(this.ct.getImageData(0, 0, this.w, this.h));
-    dataToClear.forEach((value, i) => value.forEach((v, j) => {
-      if (v.R || v.G || v.B) {
-        data[i][j].A = 0;
+  #clear(dataToClear, data, mode) {
+    const newGrade = CvTools.gradeData({ width: data[0].length, height: data.length });
+    dataToClear.forEach((value, i) => value.forEach((vl, j) => {
+      const d = data[i][j];
+      for (const c in d) {
+        if (mode === 'clear') {
+          if (vl[3]) d[c] = 0;
+          continue;
+          // eslint-disable-next-line
+        } else if (vl[3] && d[3] && c < 3) newGrade[i][j][c] = eval(mode);
+        else newGrade[i][j][c] = d[c] | vl[c];
       }
     }));
-    const newData = this.ct.createImageData(this.w, this.h);
+
+    const imageData = this.ct.createImageData(this.w, this.h);
+    if (mode === 'clear') CvTools.switchData(data, imageData, 'from');
+    else CvTools.switchData(newGrade, imageData, 'from');
+    return imageData;
+  }
+
+  #intersection(imageData, mode) {
+    const dataToClear = CvTools.gradeData(imageData);
+    CvTools.switchData(dataToClear, imageData, 'to');
+
+    const image = this.ct.getImageData(0, 0, this.w, this.h);
+    const data = CvTools.gradeData(image);
+    CvTools.switchData(data, image, 'to');
+    const newData = this.#clear(dataToClear, data, mode);
     this.hide();
-    CvTools.switchData(data, newData, 'from');
     this.ct.putImageData(newData, 0, 0);
   }
 
@@ -293,8 +301,7 @@ export default class CvTools {
               if (a && v < x) x = v;
               if (a && v > w) w = v;
               if (!a) return v - x + m;
-            }
-            if (ind % 2) {
+            } else {
               if (a && v < y) y = v;
               if (a && v > h) h = v;
               if (!a) return v - y + m;
@@ -311,32 +318,32 @@ export default class CvTools {
     this.absPos(this.x, this.y);
     this.w = w - this.#toCenter_x + m;
     this.h = h - this.#toCenter_y + m;
-    for (const v of this.#path) {
-      this.#printt(v.vetor, v.fill, v.stk, v.close, v.clear);
-    }
   }
 
   /** fill {c: color, n: evenodd [bool]}, stk {c: color, l: lineWidth} */
-  print(f = [[]], fill = { c: '#303080', n: true }, stk = false, close = true, clear = false) {
+  print(f = [[]], fill = { c: '#303080', n: true }, stk = false, close = true, mode = '') {
     const vetor = f.map((v) => [...v]);
     this.#pathh.push({
-      vetor, fill, stk, close, clear,
+      vetor, fill, stk, close, mode,
     });
     this.#path.push({
-      vetor, fill, stk, close, clear,
+      vetor, fill, stk, close, mode,
     });
     this.#centralizer();
+    for (const v of this.#path) {
+      this.#printt(v.vetor, v.fill, v.stk, v.close, v.mode);
+    }
   }
 
-  #printt(f, fill, stk, close, clear) {
-    if (clear) {
+  #printt(f, fill, stk, close, mode) {
+    if (mode.length > 0) {
       const canvas = document.createElement('canvas');
       canvas.width = this.w;
       canvas.height = this.h;
       const ct = canvas.getContext('2d');
       CvTools.printOut(ct, f, fill, stk, close);
       const dataToClear = ct.getImageData(0, 0, this.w, this.h);
-      this.#clear(dataToClear);
+      this.#intersection(dataToClear, mode);
       return;
     }
 

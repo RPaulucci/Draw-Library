@@ -35,7 +35,7 @@ export default class RppDraw {
 
   /** z = [x, y, x, y] */
   static acos(z) {
-    if (z.length !== 4) return -1;
+    if (z.length < 4) return -1;
     let s = -1; let
       n = 180;
 
@@ -290,9 +290,18 @@ export default class RppDraw {
   /** deg don't should have a value next of 360 or -360 */
   static arc(z, deg) {
     deg %= 360;
-    if (deg > 359 || deg < -359) return [];
+
+    const direction = RppDraw.acos(z);
+
+    if (deg > 359 || deg < -359 || 1 - Math.abs(deg) > 0) {
+      const vetor = z;
+      vetor.perimeter = 0;
+      vetor.range = 0;
+      vetor.startAngle = direction;
+      vetor.endAngle = direction;
+      return vetor;
+    }
     const [xa, ya, xb, yb] = z;
-    const direction = RppDraw.acos([xa, ya, xb, yb]);
     const angle = -deg / 2 + direction;
     const r = (RppDraw.hipXY(xa, ya, xb, yb) / 2) / RppDraw.sin(0, deg / 2);
     const per = 2 * Math.PI * Math.abs(r);
@@ -304,7 +313,7 @@ export default class RppDraw {
     const vetor = [xa, ya];
     let x = RppDraw.cos(xa, angle);
     let y = RppDraw.sin(ya, angle);
-    for (let i = 1.48 * pace; i < Math.abs(deg) - 2 * pace; i += pace) {
+    for (let i = 1.48 * pace; i < Math.abs(deg) - pace; i += pace) {
       x = RppDraw.cos(x, angle + i * t);
       y = RppDraw.sin(y, angle + i * t);
       vetor.endAngle = (angle + i * t) % 360;
@@ -318,12 +327,29 @@ export default class RppDraw {
   }
 
   static arcFromAngle(z, angle) {
-    const [xa, ya, xb, yb] = z;
-    const direction = RppDraw.acos([xa, ya, xb, yb]);
-    let deg = (direction - (angle % 360)) * 2;
-    if (deg > 360) deg -= 180;
-    if (deg < -360) deg += 180;
-    return RppDraw.arc(z, deg % 360);
+    const direction = RppDraw.acos(z);
+    while (angle < 0) angle += 360;
+    while (angle > 360) angle -= 360;
+    let deg = ((direction - angle) * 2);
+    if (deg > 360) deg = (-360 + direction - angle) * 2;
+    if (deg < -360) deg = (360 + direction - angle) * 2;
+
+    return RppDraw.arc(z, deg);
+  }
+
+  // Pendente angulos especificos da erro!!!
+  static angPerToPer(z, angle) {
+    const vetor = [];
+    let [n, a] = [0, angle];
+    let points = z.slice(0, 4);
+    while (n < z.length - 2) {
+      const v = RppDraw.arcFromAngle(points, a);
+      vetor.push(...v);
+      a = v.endAngle;
+      n += 2;
+      points = z.slice(n, n + 4);
+    }
+    return vetor;
   }
 
   static rd(x, y, r, sa, ea) {
@@ -340,10 +366,6 @@ export default class RppDraw {
       v.push(a, b);
     }
     return v;
-  }
-
-  static arcFromAngleToPoints() {
-
   }
 
   static figCirc({
