@@ -130,6 +130,14 @@ export default class RppDraw {
     return vetor;
   }
 
+  static shift(x, y, vetor) {
+    const f = vetor.map((v, i) => {
+      if (i % 2) return v + y;
+      return v + x;
+    });
+    return f;
+  }
+
   static arcToPoints(z, degs = [0]) {
     let vetor = [];
     const v = z;
