@@ -60,6 +60,18 @@ export default class RppDraw {
     return [a, b];
   }
 
+  static vetorX(vetor) {
+    const f = [];
+    vetor.forEach((v, i) => (!(i % 2) ? f.push(v) : 0));
+    return f;
+  }
+
+  static vetorY(vetor) {
+    const f = [];
+    vetor.forEach((v, i) => ((i % 2) ? f.push(v) : 0));
+    return f;
+  }
+
   static aurea(s, n, ang = 0) {
     let a; let
       b;
@@ -130,7 +142,7 @@ export default class RppDraw {
     return vetor;
   }
 
-  static shift(x, y, vetor) {
+  static shift(vetor, x, y) {
     const f = vetor.map((v, i) => {
       if (i % 2) return v + y;
       return v + x;
@@ -138,6 +150,7 @@ export default class RppDraw {
     return f;
   }
 
+ 
   static arcToPoints(z, degs = [0]) {
     let vetor = [];
     const v = z;
