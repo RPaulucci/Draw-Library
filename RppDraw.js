@@ -178,16 +178,18 @@ export default class RppDraw {
     const vetorY = RppDraw.vetorY(vetor);
     const minx = vetorX.sort((a, b) => a - b).shift();
     const miny = vetorY.sort((a, b) => a - b).shift();
+    const { mid } = RppDraw.interPoints(vetor);
 
     const px = minx + x;
     const py = miny + y;
+    const a = RppDraw.acos([px, py, mid[0], mid[1]]);
 
     const f = [];
     for (let i = 0; i < vetor.length; i += 2) {
-      const ang = RppDraw.acos([vetor[i], vetor[i + 1], px, py]);
+      const ang = RppDraw.acos([px, py, vetor[i], vetor[i + 1]]);
       const hip = RppDraw.hipXY(px, py, vetor[i], vetor[i + 1]);
-      const ax = RppDraw.cos(px, ang + angle, hip);
-      const ay = RppDraw.sin(py, ang + angle, hip);
+      const ax = RppDraw.cos(px, ang + angle + (360 - a), hip);
+      const ay = RppDraw.sin(py, ang + angle + (360 - a), hip);
       f.push(ax, ay);
     }
 
