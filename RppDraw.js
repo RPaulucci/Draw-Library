@@ -60,12 +60,14 @@ export default class RppDraw {
     return [a, b];
   }
 
+  // Extrai um vetor de coordenadas apenas x.
   static vetorX(vetor) {
     const f = [];
     vetor.forEach((v, i) => (!(i % 2) ? f.push(v) : 0));
     return f;
   }
 
+  // Extrai um vetor de coordenadas apenas y.
   static vetorY(vetor) {
     const f = [];
     vetor.forEach((v, i) => ((i % 2) ? f.push(v) : 0));
@@ -150,7 +152,28 @@ export default class RppDraw {
     return f;
   }
 
- 
+  // Gira o array em um eixo determinado(x, y).
+  static turnPx(vetor, x, y, angle) {
+    const vetorX = RppDraw.vetorX(vetor);
+    const vetorY = RppDraw.vetorY(vetor);
+    const minx = vetorX.sort((a, b) => a - b).shift();
+    const miny = vetorY.sort((a, b) => a - b).shift();
+
+    const px = minx + x;
+    const py = miny + y;
+
+    const f = [];
+    for (let i = 0; i < vetor.length; i += 2) {
+      const ang = RppDraw.acos([vetor[i], vetor[i + 1], px, py]);
+      const hip = RppDraw.hipXY(px, py, vetor[i], vetor[i + 1]);
+      const ax = RppDraw.cos(px, ang + angle, hip);
+      const ay = RppDraw.sin(py, ang + angle, hip);
+      f.push(ax, ay);
+    }
+
+    return f;
+  }
+
   static arcToPoints(z, degs = [0]) {
     let vetor = [];
     const v = z;
