@@ -60,18 +60,38 @@ export default class RppDraw {
     return [a, b];
   }
 
-  // Extrai um vetor de coordenadas apenas x.
+  // Extrai as coordenadas x de um array. return Number[].
   static vetorX(vetor) {
     const f = [];
     vetor.forEach((v, i) => (!(i % 2) ? f.push(v) : 0));
     return f;
   }
 
-  // Extrai um vetor de coordenadas apenas y.
+  // Extrai as coordenadas y de um array. return Number[].
   static vetorY(vetor) {
     const f = [];
     vetor.forEach((v, i) => ((i % 2) ? f.push(v) : 0));
     return f;
+  }
+
+  // Extrai os pontos máximos, mínimos e médio de um array.
+  // return Object{ max: { x, y }, min: { x, y }, mid: { x, y } }.
+  static interPoints(vetor) {
+    const min = [];
+    const mid = [];
+    const max = [];
+
+    const vetorX = RppDraw.vetorX(vetor);
+    const vetorY = RppDraw.vetorY(vetor);
+
+    min.push(vetorX.sort((a, b) => a - b).shift());
+    min.push(vetorY.sort((a, b) => a - b).shift());
+    max.push(vetorX.pop());
+    max.push(vetorY.pop());
+    mid.push(min[0] + (Math.abs(max[0] - min[0]) / 2));
+    mid.push(min[1] + (Math.abs(max[1] - min[1]) / 2));
+
+    return { min, mid, max };
   }
 
   static aurea(s, n, ang = 0) {
