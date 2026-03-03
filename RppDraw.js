@@ -164,6 +164,63 @@ export default class RppDraw {
     return vetor;
   }
 
+  static pizzaSlice({
+    x, y, s, minRadius, maxRadius, angle = 0,
+  }) {
+    const ap = 360 / s;
+    const ang = angle - ap / 2;
+
+    const intAng = ang;
+    const vetor1 = RppDraw.newFig({
+      x, y, s, w: maxRadius, intAng, l: 2,
+    });
+    const v = RppDraw.newFig({
+      x, y, s, w: minRadius, intAng, l: 2,
+    });
+    vetor1.push(v[2], v[3], v[0], v[1]);
+
+    return vetor1;
+  }
+
+  // Desenha uma 'fatia de pizza' a partir de um eixo x, y.
+  static arcArea({
+    x, y, s, n = 1, minRadius, maxRadius, space, angle = 0,
+  }) {
+    const ap = 360 / s;
+    const ang = angle - ap / 2;
+
+    const vetor = [];
+    for (let i = 0; i < n; i += 1) {
+      const intAng = ang + ap * i;
+      const vetor1 = RppDraw.newFig({
+        x, y, s, w: maxRadius, intAng, l: 2,
+      });
+      const v = RppDraw.newFig({
+        x, y, s, w: minRadius, intAng, l: 2,
+      });
+      vetor1.push(v[2], v[3], v[0], v[1]);
+
+      const px = RppDraw.cos(0, angle + ap * i, space);
+      const py = RppDraw.sin(0, angle + ap * i, space);
+      const vetor2 = RppDraw.shift(vetor1, px, py);
+
+      const a1 = RppDraw.acos([x, y, vetor2[0], vetor2[1]]);
+      const a2 = RppDraw.acos([x, y, vetor2[2], vetor2[3]]);
+      let a = Math.abs(a1 - a2);
+      if (a > 180) a = Math.abs(a - 360);
+
+      const a3 = RppDraw.acos([x, y, vetor2[4], vetor2[5]]);
+      const a4 = RppDraw.acos([x, y, vetor2[6], vetor2[7]]);
+      let b = Math.abs(a3 - a4);
+      if (b > 180) b = Math.abs(b - 360);
+      const vetor3 = RppDraw.arcToPoints(vetor2, [a, 0, -b, 0]);
+      vetor.push(vetor3);
+    }
+
+    return vetor;
+  }
+
+  // Arrasta o array xpx na horizontal e ypx na vertical
   static shift(vetor, x, y) {
     const f = vetor.map((v, i) => {
       if (i % 2) return v + y;
