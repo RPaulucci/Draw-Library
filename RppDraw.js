@@ -187,11 +187,11 @@ export default class RppDraw {
     x, y, s, n = 1, minRadius, maxRadius, space, angle = 0,
   }) {
     const ap = 360 / s;
-    const ang = angle - ap / 2;
+    const ang = angle + ap / 2;
 
     const vetor = [];
     for (let i = 0; i < n; i += 1) {
-      const intAng = ang + ap * i;
+      const intAng = angle + ap * i;
       const vetor1 = RppDraw.newFig({
         x, y, s, w: maxRadius, intAng, l: 2,
       });
@@ -200,8 +200,8 @@ export default class RppDraw {
       });
       vetor1.push(v[2], v[3], v[0], v[1]);
 
-      const px = RppDraw.cos(0, angle + ap * i, space);
-      const py = RppDraw.sin(0, angle + ap * i, space);
+      const px = RppDraw.cos(0, ang + ap * i, space);
+      const py = RppDraw.sin(0, ang + ap * i, space);
       const vetor2 = RppDraw.shift(vetor1, px, py);
 
       const a1 = RppDraw.acos([x, y, vetor2[0], vetor2[1]]);
