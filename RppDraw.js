@@ -229,6 +229,20 @@ export default class RppDraw {
     return f;
   }
 
+  // Arrasta o array em um angulo por px pixels.
+  static shiftAngle(vetor, angle, px) {
+    const vetor1 = [];
+    vetor.forEach((v, i) => {
+      if (!(i % 2)) {
+        const a = RppDraw.pace({
+          x: v, y: vetor[i + 1], w: px, a: angle,
+        });
+        vetor1.push(...a);
+      }
+    });
+    return vetor1;
+  }
+
   // Gira o array em um eixo determinado(x, y).
   static turnPx(vetor, x, y, angle) {
     const vetorX = RppDraw.vetorX(vetor);
@@ -412,6 +426,7 @@ export default class RppDraw {
 
   /** deg don't should have a value next of 360 or -360 */
   static arc(z, deg) {
+    if (z.length < 4) return [];
     deg %= 360;
 
     const direction = RppDraw.acos(z);
