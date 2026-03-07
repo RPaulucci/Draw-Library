@@ -279,6 +279,20 @@ export default class RppDraw {
     return vetor;
   }
 
+  // Cria uma hash table das coodenadas x e y;
+  static hashTable(vetor) {
+    const vetorTable = {};
+    vetor.forEach((v, i) => {
+      const x = v.toFixed();
+      const y = vetor[i + 1].toFixed();
+      if (!(i % 2)) {
+        vetorTable[x] = {};
+        vetorTable[x][y] = i;
+      }
+    });
+    return vetorTable;
+  }
+
   static chanfer(side, radius, angle, ch, x, y) {
     const vetor = [];
     const z = 360 / side;
