@@ -283,14 +283,59 @@ export default class RppDraw {
   static hashTable(vetor) {
     const vetorTable = {};
     vetor.forEach((v, i) => {
-      const x = v.toFixed();
-      const y = vetor[i + 1].toFixed();
       if (!(i % 2)) {
+        const x = v.toFixed();
+        const y = vetor[i + 1].toFixed();
         vetorTable[x] = {};
         vetorTable[x][y] = i;
       }
     });
     return vetorTable;
+  }
+
+  /**
+   * Calcula um fechamento sem ponta.
+   * @param {Number} startAngle
+   * @param {Number} endAngle
+   * @param {Array<Number>} vetor
+   * @param {Number} steps
+   * @returns {Array<Number>}
+   */
+  static soft(startAngle, endAngle, vetor, steps = 50) {
+    if (!(vetor instanceof Array)) return new Error('vetor is not a instance of Array.');
+    if (vetor.length < 4) return new Error('vetor has fewer than 4 elements.');
+
+    const [x1, y1, x2, y2] = vetor;
+
+    // 1. Calcula a distância em linha reta entre o ponto inicial e final.
+    const distance = RppDraw.hipXY(x1, y1, x2, y2);
+
+    // 2. Define a força dos pontos de controle.
+    const controlForce = distance * 0.4;
+
+    // 3. Calcula o pont de contrle1: puxa a partir da saida.
+    const cx1 = RppDraw.cos(x1, startAngle, controlForce);
+    const cy1 = RppDraw.sin(y1, startAngle, controlForce);
+
+    // 4. Calcula o ponto de controle 2: puxa antes da chegada;
+    const cx2 = RppDraw.cos(x2, endAngle, -controlForce);
+    const cy2 = RppDraw.sin(y2, endAngle, -controlForce);
+
+    const pontosDaCurva = [];
+
+    for (let i = 0; i <= steps; i += 1) {
+      const t = i / steps;
+      const mt = 1 - t;
+
+      const x = (mt ** 3 * x1) + (3 * mt ** 2 * t * cx1)
+        + (3 * mt * t ** 2 * cx2) + (t ** 3 * x2);
+
+      const y = (mt ** 3 * y1) + (3 * mt ** 2 * t * cy1)
+        + (3 * mt * t ** 2 * cy2) + (t ** 3 * y2);
+
+      pontosDaCurva.push(x, y);
+    }
+    return pontosDaCurva;
   }
 
   static chanfer(side, radius, angle, ch, x, y) {
