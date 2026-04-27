@@ -301,7 +301,7 @@ export default class RppDraw {
    * @param {Number} steps
    * @returns {Array<Number>}
    */
-  static soft(startAngle, endAngle, vetor, steps = 50) {
+  static soft(startAngle, endAngle, vetor, steps = 50, control = 0.8) {
     if (!(vetor instanceof Array)) return new Error('vetor is not a instance of Array.');
     if (vetor.length < 4) return new Error('vetor has fewer than 4 elements.');
 
@@ -311,7 +311,7 @@ export default class RppDraw {
     const distance = RppDraw.hipXY(x1, y1, x2, y2);
 
     // 2. Define a força dos pontos de controle.
-    const controlForce = distance * 0.4;
+    const controlForce = distance * control;
 
     // 3. Calcula o pont de contrle1: puxa a partir da saida.
     const cx1 = RppDraw.cos(x1, startAngle, controlForce);
