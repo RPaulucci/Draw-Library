@@ -22,7 +22,7 @@ export default class CvTools {
 
   margin;
 
-  fig = [];
+  props = {};
 
   constructor(canvas = document.createElement('canvas')) {
     this.#view = canvas;
@@ -51,14 +51,14 @@ export default class CvTools {
 
   set x(x) {
     this.#x = x;
-    this.st.left = `${x + this.#toCenter_x}px`;
+    this.st.left = `${(x + this.#toCenter_x) * (this.width / this.w)}px`;
   }
 
   get y() { return this.#y; }
 
   set y(y) {
     this.#y = y;
-    this.st.top = `${y + this.#toCenter_y}px`;
+    this.st.top = `${(y + this.#toCenter_y) * (this.width / this.w)}px`;
   }
 
   get w() { return this.#view.width; }
