@@ -30,7 +30,7 @@ export default class HashCoordenates {
     const hy = `y_${y.toFixed()}`;
 
     if (!this.#hash[hx]) this.#hash[hx] = {};
-    if (this.#hash[hx][hy]) return null;
+    if (this.#hash[hx][hy]) return this.#hash[hx][hy];
     this.#hash[hx][hy] = info;
     this.#amount += 1;
 
@@ -42,7 +42,8 @@ export default class HashCoordenates {
     vetor.forEach((v, i) => {
       if (i % 2) {
         const info = this.add(vetor[i - 1], v);
-        info.index = i - 1;
+        info.index = (i - 1) / 2;
+        if (!info.content) info.content = null;
       }
     });
   }
@@ -57,4 +58,6 @@ export default class HashCoordenates {
   }
 
   deleteTable() { this.#hash = {}; }
+
+  show() { console.log(this.#hash); }
 }

@@ -22,13 +22,29 @@ export default class LinkedList {
 
   get amount() { return this.#amount; }
 
-  get current() { return this.#current.content; }
+  start() { this.#current = this.#start; }
+
+  end() { this.#current = this.#end; }
+
+  getStart() { return this.#start.content; }
+
+  current() { return this.#current.content; }
+
+  getEnd() { return this.#end.content; }
 
   // Avança 1 item na lista. (Em current)
-  next() { this.#current = this.#current.next; }
+  next() {
+    if (!this.#current.next) return false;
+    this.#current = this.#current.next;
+    return true;
+  }
 
   // Retorna 1 item na lista. (em current)
-  previous() { this.#current = this.#current.previous; }
+  previous() {
+    if (!this.#current.previous) return false;
+    this.#current = this.#current.previous;
+    return true;
+  }
 
   // Prototipo do objeto container para usar menos memoria
   #definePrototype() {
@@ -158,5 +174,11 @@ export default class LinkedList {
     this.#current = container;
     if (!container) return null;
     return container.content;
+  }
+
+  show() {
+    console.log(this.#start);
+    console.log(this.#current);
+    console.log(this.#end);
   }
 }
