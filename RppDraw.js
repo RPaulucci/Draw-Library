@@ -245,22 +245,12 @@ export default class RppDraw {
 
   // Gira o array em um eixo determinado(x, y).
   static turnPx(vetor, x, y, angle) {
-    const vetorX = RppDraw.vetorX(vetor);
-    const vetorY = RppDraw.vetorY(vetor);
-    const minx = vetorX.sort((a, b) => a - b).shift();
-    const miny = vetorY.sort((a, b) => a - b).shift();
-    const { mid } = RppDraw.interPoints(vetor);
-
-    const px = minx + x;
-    const py = miny + y;
-    const a = RppDraw.acos([px, py, mid[0], mid[1]]);
-
     const f = [];
     for (let i = 0; i < vetor.length; i += 2) {
-      const ang = RppDraw.acos([px, py, vetor[i], vetor[i + 1]]);
-      const hip = RppDraw.hipXY(px, py, vetor[i], vetor[i + 1]);
-      const ax = RppDraw.cos(px, ang + angle + (360 - a), hip);
-      const ay = RppDraw.sin(py, ang + angle + (360 - a), hip);
+      const ang = RppDraw.acos([x, y, vetor[i], vetor[i + 1]]);
+      const hip = RppDraw.hipXY(x, y, vetor[i], vetor[i + 1]);
+      const ax = RppDraw.cos(x, ang + angle, hip);
+      const ay = RppDraw.sin(y, ang + angle, hip);
       f.push(ax, ay);
     }
 
@@ -503,8 +493,8 @@ export default class RppDraw {
     const r = (RppDraw.hipXY(xa, ya, xb, yb) / 2) / RppDraw.sin(0, deg / 2);
     const per = 2 * Math.PI * Math.abs(r);
     const range = (per / 360) * deg;
-    const pace = deg / range; let
-      t = 1;
+    const pace = deg / range;
+    let t = 1;
     if (deg < 0) t = -1;
 
     const vetor = [xa, ya];
@@ -624,7 +614,7 @@ export default class RppDraw {
   }
 
   /** z = [xa, ya, xb, yb], 0 < p < 1 */
-  static midPoint(z, p) {
+  static midPoint(z, p = 0.5) {
     if (z.length < 4) {
       console.error('z.length precisa ser maior que 3');
       return;

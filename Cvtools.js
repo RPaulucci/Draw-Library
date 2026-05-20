@@ -12,6 +12,10 @@ export default class CvTools {
 
   #toCenter_y;
 
+  #adjustX;
+
+  #adjustY;
+
   #path;
 
   #pathh;
@@ -28,6 +32,8 @@ export default class CvTools {
     this.#view = canvas;
     this.#toCenter_x = 0;
     this.#toCenter_y = 0;
+    this.#adjustX = 1;
+    this.#adjustY = 1;
     this.#path = [];
     this.#pathh = [];
     this.margin = 20;
@@ -51,14 +57,14 @@ export default class CvTools {
 
   set x(x) {
     this.#x = x;
-    this.st.left = `${(x + this.#toCenter_x) * (this.width / this.w)}px`;
+    this.st.left = `${(x + this.#toCenter_x) * this.#adjustX}px`;
   }
 
   get y() { return this.#y; }
 
   set y(y) {
     this.#y = y;
-    this.st.top = `${(y + this.#toCenter_y) * (this.width / this.w)}px`;
+    this.st.top = `${(y + this.#toCenter_y) * this.#adjustY}px`;
   }
 
   get w() { return this.#view.width; }
@@ -85,6 +91,11 @@ export default class CvTools {
     const x = Number(this.st.left.slice(0, -2));
     const y = Number(this.st.top.slice(0, -2));
     return { x, y };
+  }
+
+  adjustXY() {
+    this.#adjustX = this.width / this.w;
+    this.#adjustY = this.height / this.h;
   }
 
   static gradeData(imageData) {
