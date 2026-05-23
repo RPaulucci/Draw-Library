@@ -8,6 +8,8 @@ import { run } from './run.js';
 export default class CvTools {
   #view;
 
+  #node;
+
   #toCenter_x;
 
   #toCenter_y;
@@ -30,6 +32,7 @@ export default class CvTools {
 
   constructor(canvas = document.createElement('canvas')) {
     this.#view = canvas;
+    this.#node = document.body;
     this.#toCenter_x = 0;
     this.#toCenter_y = 0;
     this.#adjustX = 1;
@@ -40,6 +43,8 @@ export default class CvTools {
   }
 
   get view() { return this.#view; }
+
+  set node(node) { this.#node = node; }
 
   get ct() { return this.#view.getContext('2d'); }
 
@@ -212,8 +217,13 @@ export default class CvTools {
     }
   }
 
-  display(node = document.body) {
+  display(node = this.#node) {
     node.appendChild(this.view);
+  }
+
+  showControl(turn) {
+    if (turn) this.display();
+    else this.view.remove();
   }
 
   delete() {
