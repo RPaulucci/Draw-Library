@@ -49,15 +49,15 @@ export default class RppDraw {
   }
 
   static midiAngle(z) {
-    if (z.length !== 6) return false;
+    if (z.length < 6) return false;
 
     const a = RppDraw.acos([z[2], z[3], z[0], z[1]]);
     const b = RppDraw.acos([z[2], z[3], z[4], z[5]]);
-    console.log(z);
+    let midiAngle = (a + b) / 2;
 
-    let c;
-    if (c = Math.abs(a - b) === 180 || c === 0) return -1;
-    return [a, b];
+    if (Math.abs(midiAngle - a) > 90) midiAngle += 180;
+
+    return midiAngle;
   }
 
   // Extrai as coordenadas x de um array. return Number[].
