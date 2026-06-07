@@ -24,13 +24,41 @@ export default class HashCoordenates {
     this.#vetorX.push(Math.round(x));
     this.#vetorY.push(Math.round(y));
 
-    const info = { x: Math.round(x), y: Math.round(y) };
-
     const hx = `x_${x.toFixed()}`;
     const hy = `y_${y.toFixed()}`;
 
     if (!this.#hash[hx]) this.#hash[hx] = {};
     if (this.#hash[hx][hy]) return this.#hash[hx][hy];
+
+    const info = {};
+
+    Object.defineProperties(info, {
+      x: {
+        value: Math.round(x),
+        writable: false,
+        enumerable: false,
+        configurable: false,
+      },
+      y: {
+        value: Math.round(y),
+        writable: false,
+        enumerable: false,
+        configurable: false,
+      },
+      index: {
+        value: this.#amount,
+        writable: false,
+        enumerable: false,
+        configurable: false,
+      },
+      content: {
+        value: null,
+        writable: true,
+        enumerable: false,
+        configurable: false,
+      },
+    });
+
     this.#hash[hx][hy] = info;
     this.#amount += 1;
 
@@ -40,11 +68,7 @@ export default class HashCoordenates {
   // Adiciona toda as coodenadas de um vetor na tabela.
   addVetor(vetor) {
     vetor.forEach((v, i) => {
-      if (i % 2) {
-        const info = this.add(vetor[i - 1], v);
-        info.index = (i - 1) / 2;
-        if (!info.content) info.content = null;
-      }
+      if (i % 2) this.add(vetor[i - 1], v);
     });
   }
 
