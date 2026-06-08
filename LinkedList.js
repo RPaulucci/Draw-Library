@@ -50,8 +50,8 @@ export default class LinkedList {
   #definePrototype() {
     const prot = {
       findByIndex(index) {
-        if (typeof index !== 'number') return new Error('index is not a number.');
-        if (index < 0) return new Error('Invalid index');
+        if (typeof index !== 'number') throw new Error('index is not a number.');
+        if (index < 0) throw new Error('Invalid index');
 
         index = Math.floor(index);
         if (index === this.index) return this;
@@ -59,11 +59,11 @@ export default class LinkedList {
         return this.next.findByIndex(index);
       },
       findByKey(key, value) {
-        if (typeof key !== 'string') return new Error('key is not a string');
-        if (value === undefined) return new Error('value is undefined.');
+        if (typeof key !== 'string') throw new Error('key is not a string');
+        if (value === undefined) throw new Error('value is undefined.');
 
         if (!this.next) return null;
-        if (this.content[key] === undefined) return new Error('Invalid key.');
+        if (this.content[key] === undefined) throw new Error('Invalid key.');
 
         if (this.content[key] === value) return this;
         return this.next.findByKey(key, value);
@@ -113,7 +113,7 @@ export default class LinkedList {
 
   // Adiciona 1 item na lista em um lugar especifico.
   add(item, index = this.#amount) {
-    if (!(typeof item === 'object')) return new Error('item is not a object.');
+    if (!(typeof item === 'object')) throw new Error('item is not a object.');
 
     const container = this.#defineProperties(item);
     container.index = index;
