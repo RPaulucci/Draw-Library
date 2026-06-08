@@ -3,6 +3,8 @@
 export default class HashCoordenates {
   #hash;
 
+  #vetor;
+
   #vetorX;
 
   #vetorY;
@@ -11,6 +13,7 @@ export default class HashCoordenates {
 
   constructor() {
     this.#hash = {};
+    this.#vetor = [];
     this.#vetorX = [];
     this.#vetorY = [];
     this.#amount = 0;
@@ -61,6 +64,7 @@ export default class HashCoordenates {
 
     this.#hash[hx][hy] = info;
     this.#amount += 1;
+    this.#vetor.push(info);
 
     return info;
   }
@@ -79,6 +83,10 @@ export default class HashCoordenates {
 
     if (this.#hash[hx] && this.#hash[hx][hy]) return this.#hash[hx][hy];
     return null;
+  }
+
+  index(i) {
+    return this.#vetor[i];
   }
 
   deleteTable() { this.#hash = {}; }
