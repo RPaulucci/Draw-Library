@@ -91,5 +91,5 @@ export default class HashCoordenates {
 
   deleteTable() { this.#hash = {}; }
 
-  show() { console.log(this.#hash); }
+  show() { console.log(this.#hash, this.amount); }
 }

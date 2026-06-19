@@ -92,7 +92,7 @@ export default class CvTools {
 
   set angle(a) { this.st.transform = `rotate(${a}deg)`; }
 
-  #getXY() {
+  getXY() {
     const x = Number(this.st.left.slice(0, -2));
     const y = Number(this.st.top.slice(0, -2));
     return { x, y };
@@ -302,7 +302,7 @@ export default class CvTools {
 
   deb() {
     console.log(`center_x: ${this.#toCenter_x}`, `center_y: ${this.#toCenter_y}`);
-    console.log(this.#getXY().y - this.#toCenter_y);
+    console.log(this.getXY().y - this.#toCenter_y);
     console.log(this.angle);
     console.log(this.#path);
     console.log(this.#pathh);
